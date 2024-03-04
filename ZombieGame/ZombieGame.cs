@@ -33,7 +33,122 @@ namespace ZombieGame
 
         private void TL_gameEngine(object sender, EventArgs e)
         {
+            if (playerHealth > 1)
+            {
+                TL_healthBar.Value = Convert.ToInt32(playerHealth);
+            }
+            else
+            {
+                TL_player.Image = Properties.Resources.dead1;
+                TL_gameTimer.Stop();
+                gameOver = true;
+            }
 
+            TL_lblAmmo.Text = "Ammo: " + ammo;
+            TL_lblKills.Text = "Kills: " + score;
+
+            if(TL_healthBar.Value < 20)
+            {
+                TL_healthBar.ForeColor = Color.Red;
+            }
+            //Movement TL_player.Left <--Left is left edge
+            if(goLeft && TL_player.Left > 0)
+            {
+                TL_player.Left -= playerSpeed;
+            }
+            else if(goRight && TL_player.Left + TL_player.Width < 930)
+            {
+                TL_player.Left += playerSpeed;
+            }
+            else if(goUp && TL_player.Top > 60)
+            {
+                TL_player.Top -= playerSpeed;
+            }
+            else if(goDown && TL_player.Top + TL_player.Height < 670)
+            {
+                TL_player.Top += playerSpeed;
+            }
+
+            //Ammo consuming & bullet hit & miss
+            foreach(Control x in this.Controls)
+            {
+                if(x is PictureBox && x.Tag == "ammo")
+                {
+                    if(((PictureBox)x).Bounds.IntersectsWith(TL_player.Bounds))
+                    {
+                        this.Controls.Remove(((PictureBox)x));
+                        ((PictureBox)x).Dispose();
+                        ammo += 5;
+                    }
+                }
+                else if(x is PictureBox && x.Tag =="bullet")
+                {
+                    if (((PictureBox)x).Left < 1 || ((PictureBox)x).Left > 930 || ((PictureBox)x).Top < 10 || ((PictureBox)x).Top > 700)
+                    {
+                        this.Controls.Remove(((PictureBox)x));// remove bullet from screen
+                        ((PictureBox)x).Dispose();
+                    }
+                }
+                //Zombie hits player & moves towards him
+                if(x is PictureBox && x.Tag == "zombie" || x.Tag == "zombie2")
+                {
+                    if(((PictureBox)x).Bounds.IntersectsWith(TL_player.Bounds))
+                    {
+                        playerHealth -= 1;
+                    }
+                    //move zombies towards player
+                    if(((PictureBox)x).Left > TL_player.Left)
+                    {
+                        ((PictureBox)x).Left -= zombieSpeed;
+                        if (x.Tag == "zombie")
+                        {
+                            
+                            ((PictureBox)x).Image = Properties.Resources.zleft;
+                        }
+                        else if(x.Tag == "zombie2")
+                        {
+                            ((PictureBox)x).Image = Properties.Resources.z2left;
+                        }
+                    }
+                    if(((PictureBox)x).Top > TL_player.Top)
+                    {
+                        ((PictureBox)x).Top -= zombieSpeed;
+                        
+                        if(x.Tag == "zombie")
+                        {
+                            ((PictureBox)x).Image = Properties.Resources.zup;
+                        }
+                        else if(x.Tag == "zombie2")
+                        {
+                            ((PictureBox)x).Image = Properties.Resources.z2up;
+                        }
+                    }
+                    if(((PictureBox)x).Left < TL_player.Left)
+                    {
+                        ((PictureBox)x).Left += zombieSpeed;
+                        if( x.Tag == "zombie")
+                        {
+                            ((PictureBox)x).Image = Properties.Resources.zright;
+                        }
+                        else if(x.Tag == "zombie2")
+                        {
+                            ((PictureBox)x).Image = Properties.Resources.z2right;
+                        }
+                    }
+                    if(((PictureBox)x).Top < TL_player.Top)
+                    {
+                        ((PictureBox)x).Top += zombieSpeed;
+                        if(x.Tag == "zombie")
+                        {
+                            ((PictureBox)x).Image = Properties.Resources.zdown;
+                        }
+                        else if(x.Tag == "zombie2")
+                        {
+                            ((PictureBox)x).Image = Properties.Resources.z2down;
+                        }
+                    }
+                }
+            }
         }
 
         private void TL_keyIsDown(object sender, KeyEventArgs e)
