@@ -147,6 +147,23 @@ namespace ZombieGame
                             ((PictureBox)x).Image = Properties.Resources.z2down;
                         }
                     }
+
+                    //bullet hits zombie
+                    foreach(Control j in this.Controls)
+                    {
+                        if((j is PictureBox && j.Tag == "bullet") && (x is PictureBox && x.Tag == "zombie" || x.Tag =="zombie2"))
+                        {
+                            if (x.Bounds.IntersectsWith(j.Bounds))
+                            {
+                                score++;
+                                this.Controls.Remove(j); //remove bullet from screen
+                                j.Dispose(); // remove bullet from program
+                                this.Controls.Remove(x); //remove zombie
+                                x.Dispose();//remove zombie from program
+                                MakeZombies();
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -226,7 +243,11 @@ namespace ZombieGame
 
         private void Shoot(string direction)
         {
-
+            TL_bullet shootBullet = new TL_bullet();
+            shootBullet.direction = direction;
+            shootBullet.bulletLeft = TL_player.Left + (TL_player.Width / 2);
+            shootBullet.bulletTop = TL_player.Top + (TL_player.Height / 2);
+            shootBullet.MakeBullet(this);
         }
 
         private void MakeZombies()
