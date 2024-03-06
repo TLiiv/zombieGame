@@ -36,23 +36,27 @@ namespace ZombieGame
             if (playerHealth > 1)
             {
                 TL_healthBar.Value = Convert.ToInt32(playerHealth);
+                
             }
             else
             {
                 TL_player.Image = Properties.Resources.dead1;
                 TL_gameTimer.Stop();
                 gameOver = true;
+                if (gameOver)
+                {
+                    TL_lblEnd.Visible = true;
+                }
             }
 
             TL_lblAmmo.Text = "Ammo: " + ammo;
             TL_lblKills.Text = "Kills: " + score;
 
-            if(TL_healthBar.Value < 20)
-            {
-                TL_healthBar.ForeColor = Color.Red;
-            }
+            
+
+
             //Movement TL_player.Left <--Left is left edge
-            if(goLeft && TL_player.Left > 0)
+            if (goLeft && TL_player.Left > 0)
             {
                 TL_player.Left -= playerSpeed;
             }
@@ -173,7 +177,10 @@ namespace ZombieGame
             if (gameOver)
             {
                 return;
+               
             }
+
+
             //if key pressed
             if(e.KeyCode == Keys.Left)
             {
@@ -203,10 +210,12 @@ namespace ZombieGame
 
         private void TL_keyIsUp(object sender, KeyEventArgs e)
         {
-            if(gameOver)
-            {
+            if(gameOver) 
+            { 
                 return;
             }
+
+
 
             if(e.KeyCode == Keys.Left)
             {
@@ -228,7 +237,7 @@ namespace ZombieGame
             {
                 ammo--;
                 Shoot(facing);
-                if(ammo < 0)
+                if(ammo <= 0)
                 {
                     DropAmmo();
                 }
@@ -238,7 +247,16 @@ namespace ZombieGame
 
         private void DropAmmo() 
         {
-
+            //ammo spawn to random places
+            PictureBox ammo = new PictureBox();
+            ammo.Image = Properties.Resources.ammo_Image;
+            ammo.SizeMode = PictureBoxSizeMode.AutoSize;
+            ammo.Left = rnd.Next(20, 800);
+            ammo.Top = rnd.Next(50,650);
+            ammo.Tag = "ammo";
+            this.Controls.Add(ammo);
+            ammo.BringToFront(); //bring ammo forward
+            TL_player.BringToFront(); // bring player forward
         }
 
         private void Shoot(string direction)
@@ -252,7 +270,31 @@ namespace ZombieGame
 
         private void MakeZombies()
         {
-
+            int zombieNum = rnd.Next(1, 3);
+            if(zombieNum == 1)
+            {
+                PictureBox zombie = new PictureBox();
+                zombie.Tag = "zombie";
+                zombie.Image = Properties.Resources.zdown;
+                zombie.Left = rnd.Next(0, 900);
+                zombie.Top = rnd.Next(0, 700);
+                zombie.SizeMode = PictureBoxSizeMode.AutoSize;
+                this.Controls.Add(zombie);
+                TL_player.BringToFront();
+            }else if(zombieNum == 2)
+            {
+                PictureBox zombie2 = new PictureBox();
+                zombie2.Tag = "zombie2";
+                zombie2.Image = Properties.Resources.z2up;
+                zombie2.Left = rnd.Next(0, 900);
+                zombie2.Top = rnd.Next(0, 700);
+                zombie2.SizeMode = PictureBoxSizeMode.AutoSize;
+                this.Controls.Add(zombie2);
+                TL_player.BringToFront();
+            }
+            
+            
         }
+        
     }
 }
