@@ -47,11 +47,11 @@
             // TL_lblSpc
             // 
             this.TL_lblSpc.AutoSize = true;
-            this.TL_lblSpc.Location = new System.Drawing.Point(109, 105);
+            this.TL_lblSpc.Location = new System.Drawing.Point(73, 114);
             this.TL_lblSpc.Name = "TL_lblSpc";
-            this.TL_lblSpc.Size = new System.Drawing.Size(260, 21);
+            this.TL_lblSpc.Size = new System.Drawing.Size(344, 21);
             this.TL_lblSpc.TabIndex = 1;
-            this.TL_lblSpc.Text = "To shoot press spacebar";
+            this.TL_lblSpc.Text = "To shoot zombies press spacebar";
             // 
             // TL_lblArrow
             // 
