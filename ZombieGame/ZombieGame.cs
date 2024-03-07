@@ -15,7 +15,11 @@ namespace ZombieGame
         public TL_ZombieGameForm()
         {
             InitializeComponent();
+            RestartGame();
+            
         }
+
+       
 
         bool goUp;
         bool goDown;
@@ -29,8 +33,9 @@ namespace ZombieGame
         int score = 0;
         bool gameOver= false;
         Random rnd = new Random();
+        List<PictureBox> zombiesList = new List<PictureBox>();
 
-
+        
         private void TL_gameEngine(object sender, EventArgs e)
         {
             if (playerHealth > 1)
@@ -41,11 +46,14 @@ namespace ZombieGame
             else
             {
                 TL_player.Image = Properties.Resources.dead1;
-                TL_gameTimer.Stop();
                 gameOver = true;
+                TL_gameTimer.Stop();
                 if (gameOver)
                 {
                     TL_lblEnd.Visible = true;
+                    TL_lblEnd.BringToFront();
+                    TL_lblEndRestart.Visible = true;
+                    TL_lblEndRestart.BringToFront();
                 }
             }
 
@@ -155,7 +163,7 @@ namespace ZombieGame
                     //bullet hits zombie
                     foreach(Control j in this.Controls)
                     {
-                        if((j is PictureBox && j.Tag == "bullet") && (x is PictureBox && x.Tag == "zombie" || x.Tag =="zombie2"))
+                        if((j is PictureBox && (string)j.Tag == "bullet") && (x is PictureBox && (string)x.Tag == "zombie" || (string)x.Tag =="zombie2"))
                         {
                             if (x.Bounds.IntersectsWith(j.Bounds))
                             {
@@ -164,6 +172,7 @@ namespace ZombieGame
                                 j.Dispose(); // remove bullet from program
                                 this.Controls.Remove(x); //remove zombie
                                 x.Dispose();//remove zombie from program
+                                zombiesList.Remove(((PictureBox)x));//remove from array also
                                 MakeZombies();
                             }
                         }
@@ -188,52 +197,47 @@ namespace ZombieGame
                 facing = "left";
                 TL_player.Image = Properties.Resources.left;
             }
-            else if(e.KeyCode == Keys.Right)
+            if(e.KeyCode == Keys.Right)
             {
                 goRight = true;
                 facing="right";
                 TL_player.Image = Properties.Resources.right;
             }
-            else if (e.KeyCode == Keys.Up)
+            if (e.KeyCode == Keys.Up)
             {
                 goUp = true;
                 facing = "up";
                 TL_player.Image = Properties.Resources.up;
             }
-            else if (e.KeyCode == Keys.Down)
+            if (e.KeyCode == Keys.Down)
             {
                 goDown = true;
                 facing = "down";
                 TL_player.Image = Properties.Resources.down;
             }
+
         }
 
         private void TL_keyIsUp(object sender, KeyEventArgs e)
         {
-            if(gameOver) 
-            { 
-                return;
-            }
 
-
-
-            if(e.KeyCode == Keys.Left)
+            if (e.KeyCode == Keys.Left)
             {
                 goLeft = false;
             }
-            else if(e.KeyCode == Keys.Right)
+            if (e.KeyCode == Keys.Right)
             {
                 goRight = false;
             }
-            else if (e.KeyCode == Keys.Up)
+            if (e.KeyCode == Keys.Up)
             {
                 goUp = false;
             }
-            else if (e.KeyCode == Keys.Down)
+            if (e.KeyCode == Keys.Down)
             {
                 goDown = false;
             }
-            else if (e.KeyCode == Keys.Space && ammo > 0)
+            if (e.KeyCode == Keys.Space && ammo > 0 && gameOver == false)
             {
                 ammo--;
                 Shoot(facing);
@@ -241,7 +245,10 @@ namespace ZombieGame
                 {
                     DropAmmo();
                 }
-
+            }
+            if(e.KeyCode == Keys.Enter && gameOver == true)
+            {
+                RestartGame();
             }
         }
 
@@ -279,7 +286,9 @@ namespace ZombieGame
                 zombie.Left = rnd.Next(0, 900);
                 zombie.Top = rnd.Next(0, 700);
                 zombie.SizeMode = PictureBoxSizeMode.AutoSize;
-                this.Controls.Add(zombie);
+               
+                zombiesList.Add(zombie); 
+                this.Controls.Add(zombie); 
                 TL_player.BringToFront();
             }else if(zombieNum == 2)
             {
@@ -289,12 +298,47 @@ namespace ZombieGame
                 zombie2.Left = rnd.Next(0, 900);
                 zombie2.Top = rnd.Next(0, 700);
                 zombie2.SizeMode = PictureBoxSizeMode.AutoSize;
+                zombiesList.Add(zombie2);
                 this.Controls.Add(zombie2);
                 TL_player.BringToFront();
             }
             
             
         }
-        
+        private void RestartGame()
+        {
+            
+            TL_player.Image = Properties.Resources.up;
+
+            foreach(PictureBox i in zombiesList)
+            {
+                this.Controls.Remove(i);
+            }
+
+            zombiesList.Clear();
+
+            for(int i = 0;i < 3; i++)
+            {
+                MakeZombies();
+            }
+            // reset healthbar ammo etc
+            goUp = false;
+            goDown = false;
+            goLeft = false;
+            goRight = false;
+
+            playerHealth = 100;
+            score = 0;
+            ammo = 10;
+            gameOver = false;
+
+            TL_lblEnd.Visible = false;
+            TL_lblEndRestart.Visible = false;
+            
+
+            TL_gameTimer.Start();
+
+        }
+
     }
 }

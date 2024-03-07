@@ -16,7 +16,7 @@ namespace ZombieGame
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new TL_ZombieGameForm());
+            Application.Run(new Instruction());
         }
     }
 }
